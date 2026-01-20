@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface UserQrSearchProps {
   baseUrl?: string;
@@ -32,6 +33,22 @@ export function UserQrSearch({
     return `${baseUrl}${separator}${encodeURIComponent(trimmed)}`;
   }, [baseUrl, query]);
 
+  const handleDownload = () => {
+    const svg = document.querySelector<SVGSVGElement>("#user-qr-svg");
+    if (!svg) return;
+
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svg);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `qr-${encodeURIComponent(query || "home")}.svg`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={cn("rounded-xl border bg-card p-4 shadow-sm", className)}>
       <div className="mb-3 flex items-center gap-3">
@@ -56,7 +73,7 @@ export function UserQrSearch({
 
       <div className="grid items-center gap-4 sm:grid-cols-[auto,1fr]">
         <div className="flex items-center justify-center rounded-lg bg-muted p-4">
-          <QRCodeSVG value={target} size={168} />
+          <QRCodeSVG id="user-qr-svg" value={target} size={168} />
         </div>
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -68,6 +85,9 @@ export function UserQrSearch({
           <p className="text-xs text-muted-foreground">
             Scan with a phone camera to open the user page.
           </p>
+          <Button size="sm" variant="secondary" onClick={handleDownload}>
+            Download QR (SVG)
+          </Button>
         </div>
       </div>
     </div>
