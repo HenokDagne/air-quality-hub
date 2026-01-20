@@ -13,7 +13,7 @@ interface UserQrSearchProps {
 
 // Renders a small search box that turns the current query into a QR code.
 export function UserQrSearch({
-  baseUrl = "https://air-quality-hub-theta.vercel.app/user",
+  baseUrl = "https://air-quality-hub-theta.vercel.app",
   className,
   label = "User QR lookup",
 }: UserQrSearchProps) {
