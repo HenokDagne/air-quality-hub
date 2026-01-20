@@ -3,27 +3,23 @@ import { Thermometer, Wind, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { SensorCard } from "@/components/SensorCard";
 import { AirQualityIndex } from "@/components/AirQualityIndex";
-import { FanControl } from "@/components/FanControl";
 import { StatusBar } from "@/components/StatusBar";
 import { UserQrSearch } from "@/components/UserQrSearch";
 
-const ESP_IP = "http://10.176.130.20"; // CHANGE if needed
+const ESP_IP = "http://192.168.79.186"; // CHANGE if needed
 
 type SensorData = {
   temperature: number;
   gas: number;
   dust: number;
   airQualityIndex: number;
-  fan: boolean;
 };
 
 function parseSensorResponse(raw: string) {
   // The device sometimes returns malformed JSON:
   // - NaN values
   // - missing comma between fan and dust (e.g., `"fan":true"dust":26`)
-  const sanitized = raw
-    .replace(/\bnan\b/gi, "null")
-    .replace(/("fan":\s*(?:true|false))"/i, '$1,"');
+  const sanitized = raw.replace(/\bnan\b/gi, "null");
 
   return JSON.parse(sanitized);
 }
@@ -54,7 +50,6 @@ export default function Index() {
     gas: 0,
     dust: 0,
     airQualityIndex: 0,
-    fan: false,
   });
 
   const [isConnected, setIsConnected] = useState(false);
@@ -72,7 +67,6 @@ export default function Index() {
           gas: Number(json.gas) || 0,
           dust: Number(json.dust) || 0,
           airQualityIndex: Number(json.airQualityIndex) || 0,
-          fan: Boolean(json.fan),
         });
 
         setIsConnected(true);
@@ -89,18 +83,7 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
-  const toggleFan = async (turnOn: boolean) => {
-    const endpoint = turnOn ? "/fan/on" : "/fan/off";
-
-    try {
-      const res = await fetch(`${ESP_IP}${endpoint}`, { method: "POST" });
-      console.log(res);
-      if (!res.ok) throw new Error(`Fan toggle failed: ${res.status}`);
-      setData((prev) => ({ ...prev, fan: turnOn }));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // Fan control removed
 
   const tempStatus = getTemperatureStatus(data.temperature);
   const gasStatus = getGasStatus(data.gas);
@@ -165,14 +148,7 @@ export default function Index() {
             />
           </div>
 
-          {/* Fan Control */}
-          <div className="md:col-span-2 lg:col-span-1 animate-fade-in-delay-4">
-            <FanControl
-              isOn={data.fan}
-              onToggle={toggleFan}
-              className="h-full"
-            />
-          </div>
+          {/* Fan Control removed */}
         </div>
 
         {/* Footer */}
