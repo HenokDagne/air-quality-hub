@@ -17,7 +17,7 @@ export function UserQrSearch({
   className,
   label = "User QR lookup",
 }: UserQrSearchProps) {
-  const [query, setQuery] = useState("guest");
+  const [query, setQuery] = useState("");
 
   const target = useMemo(() => {
     const trimmed = query.trim();
