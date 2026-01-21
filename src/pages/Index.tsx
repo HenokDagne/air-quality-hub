@@ -25,9 +25,9 @@ function parseSensorResponse(raw: string) {
 }
 
 function getTemperatureStatus(temp: number) {
-  if (temp >= 20 && temp <= 24)
+  if (temp >= 20 && temp <= 22)
     return { status: "good" as const, text: "Optimal" };
-  if (temp >= 18 && temp <= 26)
+  if (temp >= 23 && temp <= 26)
     return { status: "moderate" as const, text: "Acceptable" };
   return { status: "poor" as const, text: "Out of range" };
 }
@@ -39,8 +39,8 @@ function getGasStatus(gas: number) {
 }
 
 function getDustStatus(dust: number) {
-  if (dust < 50) return { status: "good" as const, text: "Excellent" };
-  if (dust < 100) return { status: "moderate" as const, text: "Moderate" };
+  if (dust < 2500) return { status: "good" as const, text: "Excellent" };
+  if (dust < 4500) return { status: "moderate" as const, text: "Moderate" };
   return { status: "poor" as const, text: "High PM" };
 }
 
